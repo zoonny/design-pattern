@@ -56,4 +56,32 @@ public class SplitVo implements Comparable<SplitVo> {
         return getEfctStDt() + " ~ " + getEfctFnsDt() + " : " + splits;
     }
 
+    // 시작일 동일 || 이전 && 종료일 동일 || 이후
+    // no split
+    public boolean isCase1(Split split) {
+        return (split.getEfctStDt().isEqual(getEfctStDt())
+                || split.getEfctStDt().isBefore(getEfctStDt()))
+                && (split.getEfctFnsDt().isEqual(getEfctFnsDt()) || split.getEfctFnsDt().isAfter(getEfctFnsDt()));
+    }
+
+    // 시작일 이후 && 종료일 이전
+    // 3 split before and after
+    public boolean isCase2(Split split) {
+        return split.getEfctStDt().isAfter(getEfctStDt()) && split.getEfctFnsDt().isBefore(getEfctFnsDt());
+    }
+
+    // 시작일 동일 || 이전 && 종료일 이전
+    // 2 split after
+    public boolean isCase3(Split split) {
+        return (split.getEfctStDt().isEqual(getEfctStDt())
+                || split.getEfctStDt().isBefore(getEfctStDt())) && split.getEfctFnsDt().isBefore(getEfctFnsDt());
+    }
+
+    // 시작일 이후 && 종료일 동일 || 이후
+    // 2 split before
+    public boolean isCase4(Split split) {
+        return split.getEfctStDt().isAfter(getEfctStDt())
+                && (split.getEfctFnsDt().isEqual(getEfctFnsDt()) || split.getEfctFnsDt().isAfter(getEfctFnsDt()));
+    }
+
 }

@@ -1,5 +1,9 @@
 package splitter;
 
-public class Splitter {
+import java.util.List;
+
+public interface Splitter {
+
+    public void split();
 
 }
