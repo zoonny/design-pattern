@@ -3,12 +3,15 @@ package splitter;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
 public class SplitSet {
     private SortedSet<LocalDateTime> splitTimes;
+    private SplitInfo splitInfo;
     private List<SplitVo> splitVos;
     private LocalDateTime basStDt;
     private LocalDateTime basFnsDt;
@@ -17,6 +20,7 @@ public class SplitSet {
         this.basStDt = LocalDateTime.parse(basStDt, DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
         this.basFnsDt = LocalDateTime.parse(basFnsDt, DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
         this.splitTimes = new TreeSet<>();
+        this.splitInfo = new SplitInfo();
     }
 
     public void addAll(List<Split> splits) {
@@ -27,6 +31,7 @@ public class SplitSet {
             if (filter(split)) {
                 splitTimes.add(split.getEfctStDt().isBefore(basStDt) ? basStDt : split.getEfctStDt());
                 splitTimes.add(split.getEfctFnsDt().isAfter(basFnsDt) ? basFnsDt : split.getEfctFnsDt());
+                splitInfo.put(split);
             }
         });
     }
@@ -45,6 +50,11 @@ public class SplitSet {
             this.splitVos.add(splitVo);
             prev = splitVo;
         }
+        this.splitVos.stream().forEach(splitVo -> {
+            splitInfo.findAll(splitVo).stream().forEach(split -> {
+                splitVo.add(split);
+            });
+        });
     }
 
     @Override
