@@ -7,14 +7,14 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class SplitSet {
-    private List<Split> splits = new LinkedList<>();
+    private List<SplitVo> splitVos = new LinkedList<>();
     private LocalDateTime basStDt;
     private LocalDateTime basFnsDt;
 
     public SplitSet(String basStDt, String basFnsDt) {
         this.basStDt = LocalDateTime.parse(basStDt, DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
         this.basFnsDt = LocalDateTime.parse(basFnsDt, DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
-        this.splits = new LinkedList<>();
+        this.splitVos = new LinkedList<>();
     }
 
     public void addAll(List<Split> splits) {
@@ -25,12 +25,20 @@ public class SplitSet {
 
     public void add(Split split) {
         if (filter(split)) {
-            splits.add(split);
+            SplitVo splitVo = new SplitVo(split.getEfctStDt(), split.getEfctFnsDt());
+            splitVo.add(split);
+            if (splitVo.getEfctStDt().isBefore(basStDt)) {
+                splitVo.setEfctStDt(basStDt);
+            }
+            if (splitVo.getEfctFnsDt().isAfter(basFnsDt)) {
+                splitVo.setEfctFnsDt(basFnsDt);
+            }
+            splitVos.add(splitVo);
         }
     }
 
     public void sort() {
-        Collections.sort(splits);
+        Collections.sort(splitVos);
     }
 
     @Override
@@ -38,7 +46,7 @@ public class SplitSet {
         StringBuilder sb = new StringBuilder();
         sb.append("[").append(getBasStDt()).append(" ~ ").append(getBasFnsDt()).append("]")
                 .append(System.lineSeparator()).append(System.lineSeparator());
-        splits.stream().forEach(i -> {
+        splitVos.stream().forEach(i -> {
             sb.append(i).append(System.lineSeparator());
         });
         return sb.toString();
@@ -59,18 +67,12 @@ public class SplitSet {
         if (split.getEfctStDt().isAfter(basFnsDt)) {
             return false;
         }
-        if (split.getEfctStDt().isBefore(basStDt)) {
-            split.setEfctStDt(basStDt);
-        }
-        if (split.getEfctFnsDt().isAfter(basFnsDt)) {
-            split.setEfctFnsDt(basFnsDt);
-        }
         return true;
     }
 
     public boolean verify() {
         sort();
-        int size = splits.size();
+        int size = splitVos.size();
         int index = 0;
         while (index < size) {
             if (index == 0) {

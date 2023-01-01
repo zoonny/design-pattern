@@ -1,7 +1,5 @@
 package splitter;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
@@ -18,6 +16,16 @@ public class App {
         SplitSet splitSet = new SplitSet("20221201000000", "20221231235959");
         splitSet.addAll(Arrays.stream(contSttusVos).collect(Collectors.toList()));
         splitSet.sort();
+        System.out.println(splitSet.toString());
+
+        ContProdVo[] contProdVo = {
+                new ContProdVo("20221101000000", "20221130000000", "P1", "P1"),
+                new ContProdVo("20221113000000", "20221207000000", "P2", "P2"),
+                new ContProdVo("20221207000000", "20221225000000", "P3", "P3"),
+                new ContProdVo("20221225000000", "99991231235959", "P1", "P1"),
+        };
+
+        splitSet.addAll(Arrays.stream(contProdVo).collect(Collectors.toList()));
         System.out.println(splitSet.toString());
     }
 }

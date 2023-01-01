@@ -2,14 +2,18 @@ package splitter;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
-public class SplitVo implements Split {
+public class SplitVo implements Comparable<SplitVo> {
     private LocalDateTime efctStDt;
     private LocalDateTime efctFnsDt;
+    private List<Split> splits;
 
     public SplitVo(LocalDateTime efctStDt, LocalDateTime efctFnsDt) {
         this.efctStDt = efctStDt;
         this.efctFnsDt = efctFnsDt;
+        this.splits = new ArrayList<>();
     }
 
     public SplitVo(String efctStDt, String efctFnsDt) {
@@ -17,28 +21,28 @@ public class SplitVo implements Split {
                 LocalDateTime.parse(efctFnsDt, DateTimeFormatter.ofPattern("yyyyMMddHHmmss")));
     }
 
-    @Override
     public LocalDateTime getEfctStDt() {
         return efctStDt;
     }
 
-    @Override
     public LocalDateTime getEfctFnsDt() {
         return efctFnsDt;
     }
 
-    @Override
     public void setEfctStDt(LocalDateTime efctStDt) {
         this.efctStDt = efctStDt;
     }
 
-    @Override
     public void setEfctFnsDt(LocalDateTime efctFnsDt) {
         this.efctFnsDt = efctFnsDt;
     }
 
+    public void add(Split split) {
+        splits.add(split);
+    }
+
     @Override
-    public int compareTo(Split o) {
+    public int compareTo(SplitVo o) {
         if (o.getEfctStDt().isBefore(efctStDt)) {
             return 1;
         } else if (o.getEfctStDt().isAfter(efctStDt)) {
@@ -49,7 +53,7 @@ public class SplitVo implements Split {
 
     @Override
     public String toString() {
-        return getEfctStDt() + " ~ " + getEfctFnsDt();
+        return getEfctStDt() + " ~ " + getEfctFnsDt() + " : " + splits;
     }
 
 }
